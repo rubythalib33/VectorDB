@@ -9,6 +9,7 @@ Done:
 - store data function:
     - insert
     - read
+    - erase
     - get all
 
 To-do:

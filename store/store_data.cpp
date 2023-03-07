@@ -27,6 +27,20 @@ bool StoreData::updateData(const std::string& label, const std::vector<float>& e
     return saveData();
 }
 
+bool StoreData::deleteData(const std::string& label) {
+    // Check if label exists
+    if (!m_data.contains(label)) {
+        std::cerr << "Error: Label " << label << " does not exist.\n";
+        return false;
+    }
+
+    // Delete label from data
+    m_data.erase(label);
+
+    // Save data to file
+    return saveData();
+}
+
 std::vector<float> StoreData::readData(const std::string& label) const {
     // Check if label exists
     if (!m_data.contains(label)) {
