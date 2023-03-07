@@ -26,3 +26,20 @@ std::vector<std::string> SemanticSearch::search(const std::vector<double>& query
     }
     return top_results;
 }
+
+bool SemanticSearch::add(const std::string& label, const std::vector<double>& embedding) {
+    labels_.push_back(label);
+    embeddings_.push_back(embedding);
+    return true;
+}
+
+bool SemanticSearch::remove(const std::string& label) {
+    auto it = std::find(labels_.begin(), labels_.end(), label);
+    if (it == labels_.end()) {
+        return false;
+    }
+    size_t index = std::distance(labels_.begin(), it);
+    labels_.erase(labels_.begin() + index);
+    embeddings_.erase(embeddings_.begin() + index);
+    return true;
+}
