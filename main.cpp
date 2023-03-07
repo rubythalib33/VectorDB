@@ -1,30 +1,44 @@
-#include "utils/search.h"
+#include "store/store_data.h"
 #include <iostream>
-#include <string>
-#include <vector>
 
 int main() {
-    std::vector<std::vector<double>> embeddings = {
-        {1.0, 0.0, 0.0},
-        {0.0, 1.0, 0.0},
-        {0.0, 0.0, 1.0},
-        {0.5, 0.5, 0.0},
-        {0.0, 0.5, 0.5},
-        {0.5, 0.0, 0.5},
-    };
+    // Initialize store data
+    StoreData store("data.json");
 
-    std::vector<std::string> labels = {"red", "green", "blue", "yellow", "cyan", "magenta"};
+    // Add sample data
+    std::vector<float> emb1 = {1.0, 2.0, 3.0};
+    store.updateData("label1", emb1);
 
-    SemanticSearch search_engine(embeddings, labels);
+    std::vector<float> emb2 = {4.0, 5.0, 6.0};
+    store.updateData("label2", emb2);
 
-    std::vector<double> query_embedding = {0.8, 0.1, 0.1};
-    double threshold = 0.6;
-    int top_k = 2;
-    std::vector<std::string> results = search_engine.search(query_embedding, threshold, top_k);
+    // Get embeddings
+    std::vector<float> emb1_copy = store.readData("label1");
+    std::vector<float> emb2_copy = store.readData("label2");
 
-    std::cout << "Results:" << std::endl;
-    for (const auto& label : results) {
-        std::cout << "- " << label << std::endl;
+    // Print embeddings
+    std::cout << "Embedding for label1: ";
+    for (float val : emb1_copy) {
+        std::cout << val << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Embedding for label2: ";
+    for (float val : emb2_copy) {
+        std::cout << val << " ";
+    }
+    std::cout << std::endl;
+
+    // Get all data
+    std::unordered_map<std::string, std::vector<float>> allData = store.getAllData();
+    for (auto& element : allData) {
+        std::string label = element.first;
+        std::vector<float> embedding = element.second;
+        std::cout << "Label: " << label << ", Embedding: ";
+        for (float val : embedding) {
+            std::cout << val << " ";
+        }
+        std::cout << std::endl;
     }
 
     return 0;

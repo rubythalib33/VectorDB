@@ -1,0 +1,1 @@
+g++ -std=c++14 -Iutils -o my_program main.cpp utils/similarity.cpp utils/search.cpp include/nlohmann/json.hpp store/store_data.cpp
