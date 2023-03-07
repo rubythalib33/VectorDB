@@ -11,9 +11,9 @@ Done:
     - read
     - erase
     - get all
+    - semantic search
 
 To-do:
-- store data function:
-    - semantic search
 - create how to access the db from outside system
 - create Dockerfile
+- create documentation and how to use
