@@ -9,11 +9,10 @@ Done:
 - store data function:
     - insert
     - read
-    - update
+    - get all
 
 To-do:
 - store data function:
-    - getall
     - semantic search
 - create how to access the db from outside system
 - create Dockerfile
