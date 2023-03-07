@@ -32,3 +32,4 @@
 *.app
 .vscode
 my_program
+data.json
