@@ -3,7 +3,7 @@
 
 int main() {
     // Initialize store data
-    StoreData store("data.json");
+    StoreData store("data/data.json");
 
     // Add sample data
     std::vector<double> emb1 = {1.0, 2.0, 3.0};
