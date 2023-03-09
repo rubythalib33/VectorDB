@@ -14,8 +14,8 @@ Done:
     - semantic search
 
 - CMakeList
+- create how to access the db from outside system
 
 To-do:
-- create how to access the db from outside system
 - create Dockerfile
 - create documentation and how to use
