@@ -17,5 +17,6 @@ Done:
 - create how to access the db from outside system
 
 To-do:
+- authentication
 - create Dockerfile
 - create documentation and how to use
