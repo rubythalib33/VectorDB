@@ -13,6 +13,8 @@ Done:
     - get all
     - semantic search
 
+- CMakeList
+
 To-do:
 - create how to access the db from outside system
 - create Dockerfile
