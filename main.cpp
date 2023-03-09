@@ -1,50 +1,29 @@
-#include "store/store_data.h"
 #include <iostream>
+#include <boost/asio.hpp>
+#include "server/server.h"
+
+using boost::asio::ip::tcp;
 
 int main() {
-    // Initialize store data
-    StoreData store("data/data.json");
+    try {
+        // Create an io_context object
+        boost::asio::io_context io_context;
 
-    // Add sample data
-    std::vector<double> emb1 = {1.0, 2.0, 3.0};
-    store.insertData("label1", emb1);
+        // Set up an endpoint to listen on
+        tcp::endpoint endpoint(tcp::v4(), 8000);
 
-    std::vector<double> emb2 = {4.0, 5.0, 6.0};
-    store.insertData("label2", emb2);
+        // Create a StoreData object
+        std::string data_file_path = "data/data.json";
+        StoreData store(data_file_path);
 
-    // Get embeddings
-    std::vector<double> emb1_copy = store.readData("label1");
-    std::vector<double> emb2_copy = store.readData("label2");
+        // Create a server object and start accepting connections
+        Server server(io_context, endpoint, store);
 
-    // Print embeddings
-    std::cout << "Embedding for label1: ";
-    for (double val : emb1_copy) {
-        std::cout << val << " ";
-    }
-    std::cout << std::endl;
+        // Run the io_context object
+        io_context.run();
 
-    std::cout << "Embedding for label2: ";
-    for (double val : emb2_copy) {
-        std::cout << val << " ";
-    }
-    std::cout << std::endl;
-
-    // Get all data
-    std::unordered_map<std::string, std::vector<double>> allData = store.getAllData();
-    for (auto& element : allData) {
-        std::string label = element.first;
-        std::vector<double> embedding = element.second;
-        std::cout << "Label: " << label << ", Embedding: ";
-        for (double val : embedding) {
-            std::cout << val << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    // Search for similar embeddings
-    std::vector<std::string> similar = store.search(std::vector<double>{1.0, 2.0, 3.0}, 0.5, 1);
-    for (std::string label : similar) {
-        std::cout << "Similar label: " << label << std::endl;
+    } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
     }
 
     return 0;
