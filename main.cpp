@@ -7,10 +7,10 @@ int main() {
 
     // Add sample data
     std::vector<double> emb1 = {1.0, 2.0, 3.0};
-    store.updateData("label1", emb1);
+    store.insertData("label1", emb1);
 
     std::vector<double> emb2 = {4.0, 5.0, 6.0};
-    store.updateData("label2", emb2);
+    store.insertData("label2", emb2);
 
     // Get embeddings
     std::vector<double> emb1_copy = store.readData("label1");

@@ -8,8 +8,9 @@ using json = nlohmann::json;
 class StoreData {
 public:
     StoreData(const std::string& filename);
-    bool updateData(const std::string& label, const std::vector<double>& embedding);
+    bool insertData(const std::string& label, const std::vector<double>& embedding);
     bool deleteData(const std::string& label);
+    bool updateData(const std::string& label, const std::vector<double>& embedding);
     std::vector<double> readData(const std::string& label) const;
     bool saveData();
     std::unordered_map<std::string, std::vector<double>> getAllData() const;

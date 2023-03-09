@@ -23,7 +23,7 @@ StoreData::StoreData(const std::string& filename) : m_filename(filename) {
     m_search = SemanticSearch(embeddings, labels);
 }
 
-bool StoreData::updateData(const std::string& label, const std::vector<double>& embedding) {
+bool StoreData::insertData(const std::string& label, const std::vector<double>& embedding) {
     // Check if label already exists
     if (m_data.contains(label)) {
         std::cerr << "Error: Label " << label << " already exists.\n";
@@ -52,6 +52,23 @@ bool StoreData::deleteData(const std::string& label) {
     m_data.erase(label);
 
     m_search.remove(label);
+
+    // Save data to file
+    return saveData();
+}
+
+bool StoreData::updateData(const std::string& label, const std::vector<double>& embedding) {
+    // Check if label exists
+    if (!m_data.contains(label)) {
+        std::cerr << "Error: Label " << label << " does not exist.\n";
+        return false;
+    }
+
+    // Update embedding
+    m_data[label]["embedding"] = embedding;
+
+    m_search.remove(label);
+    m_search.add(label, embedding);
 
     // Save data to file
     return saveData();
