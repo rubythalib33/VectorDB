@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(my_program)
+project(vectordb)
 
 
 set(CMAKE_CXX_STANDARD 14)
@@ -20,10 +20,10 @@ set(SOURCES
     include/nlohmann/json.hpp
     store/store_data.cpp)
 
-add_executable(my_program ${SOURCES})
+add_executable(vectordb ${SOURCES})
 
-target_link_libraries(my_program
+target_link_libraries(vectordb
     ${Boost_LIBRARIES}
     -pthread
 )
-target_include_directories(my_program PRIVATE utils include)
+target_include_directories(vectordb PRIVATE utils include)
