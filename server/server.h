@@ -6,7 +6,9 @@ using boost::asio::ip::tcp;
 
 class Session : public std::enable_shared_from_this<Session> {
 public:
-    Session(tcp::socket socket, StoreData& store) : socket_(std::move(socket)), store_(store) {}
+    Session(tcp::socket socket, StoreData& store) : socket_(std::move(socket)), store_(store) {
+        generateToken();
+    }
 
     void start() {
         authenticate();
@@ -32,7 +34,6 @@ private:
                     std::string expected_username = std::getenv("VDB_USERNAME") != nullptr ? std::getenv("VDB_USERNAME") : "root";
                     std::string expected_password = std::getenv("VDB_PASSWORD") != nullptr ? std::getenv("VDB_PASSWORD") : "root";
                     if (username == expected_username && password == expected_password) {
-                        generateToken();
                         doWrite(token_);
                         doRead();
                     } else {
@@ -47,7 +48,6 @@ private:
 
     void generateToken() {
         token_ = "token_" + std::to_string(std::rand());
-        std::cout << "Generated token: " << token_ << std::endl;
     }
 
     void doRead() {
