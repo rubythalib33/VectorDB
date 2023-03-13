@@ -8,6 +8,7 @@ class Session : public std::enable_shared_from_this<Session> {
 public:
     Session(tcp::socket socket, StoreData& store) : socket_(std::move(socket)), store_(store) {
         generateToken();
+        setExpectedUsernamePassword();
     }
 
     void start() {
@@ -16,6 +17,8 @@ public:
 
 private:
     std::string token_;
+    std::string expected_username_;
+    std::string expected_password_;
     void authenticate(){
         auto self(shared_from_this());
         boost::asio::async_read_until(socket_, buffer_, '\n',
@@ -30,24 +33,30 @@ private:
                         doWrite("ERROR: Invalid method\n");
                         socket_.close();
                         return;
-                    }
-                    std::string expected_username = std::getenv("VDB_USERNAME") != nullptr ? std::getenv("VDB_USERNAME") : "root";
-                    std::string expected_password = std::getenv("VDB_PASSWORD") != nullptr ? std::getenv("VDB_PASSWORD") : "root";
-                    if (username == expected_username && password == expected_password) {
-                        doWrite(token_);
-                        doRead();
                     } else {
-                        doWrite("ERROR: Authentication failed\n");
-                        socket_.close();
+                        if (username == expected_username_ && password == expected_password_) {
+                            doWrite(token_);
+                            doRead();
+                        } else {
+                            doWrite("ERROR: Authentication failed\n");
+                            socket_.close();
+                        }
                     }
                 } else if (ec != boost::asio::error::eof) {
                     std::cerr << "Error: " << ec.message() << std::endl;
+                } else {
+                    socket_.close();
                 }
             });
     }
 
     void generateToken() {
         token_ = "token_" + std::to_string(std::rand());
+    }
+
+    void setExpectedUsernamePassword(){
+        expected_username_ = std::getenv("VDB_USERNAME") != nullptr ? std::getenv("VDB_USERNAME") : "root";
+        expected_password_ = std::getenv("VDB_PASSWORD") != nullptr ? std::getenv("VDB_PASSWORD") : "root";
     }
 
     void doRead() {
