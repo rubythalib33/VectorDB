@@ -13,6 +13,7 @@ public:
     }
 
 private:
+    std::string token_;
     void authenticate(){
         auto self(shared_from_this());
         boost::asio::async_read_until(socket_, buffer_, '\n',
@@ -23,11 +24,16 @@ private:
                     std::istringstream iss(data);
                     std::string method, username, password;
                     iss >> method >> username >> password;
-                    std::string expected_username = std::getenv("VDB_USERNAME") != nullptr ? std::getenv("USERNAME") : "root";
-                    std::string expected_password = std::getenv("VDB_PASSWORD") != nullptr ? std::getenv("PASSWORD") : "root";
+                    if (method != "AUTH") {
+                        doWrite("ERROR: Invalid method\n");
+                        socket_.close();
+                        return;
+                    }
+                    std::string expected_username = std::getenv("VDB_USERNAME") != nullptr ? std::getenv("VDB_USERNAME") : "root";
+                    std::string expected_password = std::getenv("VDB_PASSWORD") != nullptr ? std::getenv("VDB_PASSWORD") : "root";
                     if (username == expected_username && password == expected_password) {
                         generateToken();
-                        doWrite(generated_tokens_.begin()->c_str());
+                        doWrite(token_);
                         doRead();
                     } else {
                         doWrite("ERROR: Authentication failed\n");
@@ -40,8 +46,7 @@ private:
     }
 
     void generateToken() {
-        token_ = "token_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
-        generated_tokens_.insert(token_);
+        token_ = "token_" + std::to_string(std::rand());
         std::cout << "Generated token: " << token_ << std::endl;
     }
 
@@ -56,8 +61,7 @@ private:
                     std::string method, tokens;
                     iss >> method >> tokens;
                     if (method == "CREATE") {
-                        if (generated_tokens_.find(tokens) != generated_tokens_.end()) {
-                            generated_tokens_.erase(tokens);
+                        if (token_ == tokens) {
                             std::string label;
                             std::vector<double> embedding;
                             iss >> label;
@@ -72,7 +76,7 @@ private:
                         }
                         
                     } else if (method == "READ") {
-                        if (generated_tokens_.find(tokens) != generated_tokens_.end()) {
+                        if (token_ == tokens) {
                             std::string label;
                             iss >> label;
                             std::vector<double> embedding = store_.readData(label);
@@ -86,7 +90,7 @@ private:
                             doWrite("ERROR: Invalid token\n");
                         }
                     } else if (method == "UPDATE") {
-                        if (generated_tokens_.find(tokens) != generated_tokens_.end()) {
+                        if (token_ == tokens) {
                             std::string label;
                             std::vector<double> embedding;
                             iss >> label;
@@ -100,7 +104,7 @@ private:
                             doWrite("ERROR: Invalid token\n");
                         }
                     } else if (method == "DELETE") {
-                        if (generated_tokens_.find(tokens) != generated_tokens_.end()) {
+                        if (token_ == tokens) {
                             std::string label;
                             iss >> label;
                             store_.deleteData(label);
@@ -109,7 +113,7 @@ private:
                             doWrite("ERROR: Invalid token\n");
                         }
                     } else if (method == "SEARCH") {
-                        if (generated_tokens_.find(tokens) != generated_tokens_.end()) {
+                        if (token_ == tokens) {
                             std::vector<double> query;
                             double val;
                             while (iss >> val) {
