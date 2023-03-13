@@ -16,6 +16,7 @@ Done:
 - CMakeList
 - create how to access the db from outside system
 - authentication
+
 To-do:
 - fix connection bug
 - create Dockerfile
