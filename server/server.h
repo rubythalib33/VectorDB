@@ -44,8 +44,6 @@ private:
                     }
                 } else if (ec != boost::asio::error::eof) {
                     std::cerr << "Error: " << ec.message() << std::endl;
-                } else {
-                    socket_.close();
                 }
             });
     }
@@ -125,7 +123,9 @@ private:
                         if (token_ == tokens) {
                             std::vector<double> query;
                             double val;
-                            while (iss >> val) {
+                            int embedding_size = store_.getEmbeddingSize();
+                            for (int i = 0; i < embedding_size; i++) {
+                                iss >> val;
                                 query.push_back(val);
                             }
                             double threshold;
@@ -140,11 +140,6 @@ private:
                             doWrite(oss.str());
                         } else {
                             doWrite("ERROR: Invalid token\n");
-                        }
-                        std::vector<double> query;
-                        double val;
-                        while (iss >> val) {
-                            query.push_back(val);
                         }
                     } else {
                         doWrite("ERROR: Invalid method\n");

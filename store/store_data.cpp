@@ -103,6 +103,13 @@ std::vector<double> StoreData::readData(const std::string& label) const {
     return m_data[label]["embedding"].get<std::vector<double>>();
 }
 
+int StoreData::getEmbeddingSize() {
+    if (m_data.empty()) {
+        return 0;
+    }
+    return m_data.begin().value()["embedding"].size();
+}
+
 bool StoreData::saveData() {
     // Write data to file
     std::ofstream file(m_filename);
@@ -126,5 +133,13 @@ std::unordered_map<std::string, std::vector<double>> StoreData::getAllData() con
 }
 
 std::vector<std::string> StoreData::search(const std::vector<double>& query_embedding, double threshold, int top_k) {
+    // check if query embedding size is consistent with the existing data embeddings
+    if (!m_data.empty()) {
+        size_t embedding_size = m_data.begin().value()["embedding"].size();
+        if (embedding_size != query_embedding.size()) {
+            std::cerr << "Error: Query embedding size " << query_embedding.size() << " is inconsistent with existing data embeddings of size " << embedding_size << ".\n";
+            return {};
+        }
+    }
     return m_search.search(query_embedding, threshold, top_k);
 }

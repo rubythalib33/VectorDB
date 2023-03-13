@@ -15,6 +15,7 @@ public:
     bool saveData();
     std::unordered_map<std::string, std::vector<double>> getAllData() const;
     std::vector<std::string> search(const std::vector<double>& query_embedding, double threshold = 0.5, int top_k = 10);
+    int getEmbeddingSize();
 private:
     json m_data;
     std::string m_filename;
