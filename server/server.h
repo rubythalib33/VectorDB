@@ -23,8 +23,8 @@ private:
                     std::istringstream iss(data);
                     std::string method, username, password;
                     iss >> method >> username >> password;
-                    std::string expected_username = std::getenv("USERNAME") != nullptr ? std::getenv("USERNAME") : "root";
-                    std::string expected_password = std::getenv("PASSWORD") != nullptr ? std::getenv("PASSWORD") : "root";
+                    std::string expected_username = std::getenv("VDB_USERNAME") != nullptr ? std::getenv("USERNAME") : "root";
+                    std::string expected_password = std::getenv("VDB_PASSWORD") != nullptr ? std::getenv("PASSWORD") : "root";
                     if (username == expected_username && password == expected_password) {
                         generateToken();
                         doWrite(generated_tokens_.begin()->c_str());
