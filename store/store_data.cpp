@@ -30,6 +30,15 @@ bool StoreData::insertData(const std::string& label, const std::vector<double>& 
         return false;
     }
 
+    // Check if embedding size is consistent with the existing data embeddings
+    if (!m_data.empty()) {
+        size_t embedding_size = m_data.begin().value()["embedding"].size();
+        if (embedding_size != embedding.size()) {
+            std::cerr << "Error: Embedding size " << embedding.size() << " is inconsistent with existing data embeddings of size " << embedding_size << ".\n";
+            return false;
+        }
+    }
+
     // Add label and embedding to data
     json data;
     data["embedding"] = embedding;
@@ -62,6 +71,15 @@ bool StoreData::updateData(const std::string& label, const std::vector<double>& 
     if (!m_data.contains(label)) {
         std::cerr << "Error: Label " << label << " does not exist.\n";
         return false;
+    }
+
+    // Check if embedding size is consistent with the existing data embeddings
+    if (!m_data.empty()) {
+        size_t embedding_size = m_data.begin().value()["embedding"].size();
+        if (embedding_size != embedding.size()) {
+            std::cerr << "Error: Embedding size " << embedding.size() << " is inconsistent with existing data embeddings of size " << embedding_size << ".\n";
+            return false;
+        }
     }
 
     // Update embedding
