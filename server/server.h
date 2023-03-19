@@ -76,8 +76,12 @@ private:
                             while (iss >> val) {
                                 embedding.push_back(val);
                             }
-                            store_.insertData(label, embedding);
-                            doWrite("OK\n");
+                            bool status = store_.insertData(label, embedding);
+                            if (status) {
+                                doWrite("OK\n");
+                            } else {
+                                doWrite("ERROR: Failed to insert data, There's no such a label or embedding size mismatch\n");
+                            }
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
@@ -92,7 +96,11 @@ private:
                                 oss << val << " ";
                             }
                             oss << "\n";
-                            doWrite(oss.str());
+                            if (embedding.size() > 0) {
+                                doWrite(oss.str());
+                            } else {
+                                doWrite("ERROR: Failed to read data, There's no such a label\n");
+                            }
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
@@ -105,8 +113,12 @@ private:
                             while (iss >> val) {
                                 embedding.push_back(val);
                             }
-                            store_.updateData(label, embedding);
-                            doWrite("OK\n");
+                            bool status = store_.updateData(label, embedding);
+                            if (status) {
+                                doWrite("OK\n");
+                            } else {
+                                doWrite("ERROR: Failed to update data, There's no such a label or embedding size mismatch\n");
+                            }
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
@@ -114,8 +126,12 @@ private:
                         if (token_ == tokens) {
                             std::string label;
                             iss >> label;
-                            store_.deleteData(label);
-                            doWrite("OK\n");
+                            bool status = store_.deleteData(label);
+                            if (status) {
+                                doWrite("OK\n");
+                            } else {
+                                doWrite("ERROR: Failed to delete data, There's no such a label\n");
+                            }
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
@@ -137,7 +153,11 @@ private:
                                 oss << label << " ";
                             }
                             oss << "\n";
-                            doWrite(oss.str());
+                            if (similar.size() > 0) {
+                                doWrite(oss.str());
+                            } else {
+                                doWrite("There's no similiar data\n");
+                            }
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
@@ -156,6 +176,8 @@ private:
             [this, self](boost::system::error_code ec, std::size_t /* length */) {
                 if (ec) {
                     std::cerr << "Error: " << ec.message() << std::endl;
+                } else {
+                    doRead(); // Add this line to keep the connection open for further communication
                 }
             });
     }
