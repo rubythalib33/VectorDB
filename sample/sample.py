@@ -29,26 +29,21 @@ if __name__ == '__main__':
     response = client.send_request('AUTH root root\n')
     token = response
     print(response)
-    time.sleep(0.1)
 
     # # Create some data
     response = client.send_request(f'CREATE {token} label 1.0 2.0 3.0\n')
     print(response)
-    time.sleep(0.1)
 
     # # Read the data
     response = client.send_request(f'READ {token} label\n')
     print(response)
-    time.sleep(0.1)
 
     # Update the data
     response = client.send_request(f'UPDATE {token} label 4.0 5.0 6.0\n')
     print(response)
-    time.sleep(0.1)
 
     # Search for similar data
     response = client.send_request(f'SEARCH {token} 4.0 5.0 6.0 0.5 1\n')
     print(response)
-    time.sleep(0.1)
 
     client.close()
