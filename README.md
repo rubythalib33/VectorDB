@@ -22,7 +22,7 @@ docker build -t vectordb:latest .
 ```
 2. Run the container:
 ```bash
-docker run -p 8000:8000 --name vectordb_container vectordb
+docker run -p 3737:3737 --name vectordb_container vectordb
 ```
 
 #### Without Docker
