@@ -4,6 +4,9 @@ FROM ubuntu:20.04
 # Set the working directory
 WORKDIR /vectordb
 
+ENV TZ=Asia/Jakarta
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Update package lists and install necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
