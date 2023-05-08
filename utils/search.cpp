@@ -43,3 +43,13 @@ bool SemanticSearch::remove(const std::string& label) {
     embeddings_.erase(embeddings_.begin() + index);
     return true;
 }
+
+bool SemanticSearch::check(const std::string& label, const std::vector<double>& query_embedding, double threshold) {
+    auto it = std::find(labels_.begin(), labels_.end(), label);
+    if (it == labels_.end()) {
+        return false;
+    }
+    size_t index = std::distance(labels_.begin(), it);
+    double sim = cosine_similarity(query_embedding, embeddings_[index]);
+    return sim >= threshold;
+}

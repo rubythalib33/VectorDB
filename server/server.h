@@ -161,7 +161,35 @@ private:
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
-                    } else {
+                    } else if (method == "CHECK"){
+                        if (token_ == tokens) {
+                            std::string label;
+                            std::vector<double> query;
+                            double threshold;
+
+                            iss >> label;
+                            double val;
+                            int embedding_size = store_.getEmbeddingSize();
+                            for (int i = 0; i < embedding_size; i++) {
+                                iss >> val;
+                                query.push_back(val);
+                            }
+                            iss >> threshold;
+                            bool status = store_.check(label, query, threshold);
+
+                            if (status) {
+                                doWrite("YES\n");
+                            } else {
+                                doWrite("NO\n");
+                            }
+                        } else {
+                            doWrite("ERROR: Invalid token\n");
+                        }
+                    } else if (method == "EXIT") {
+                        doWrite("OK\n");
+                        socket_.close();
+                    }
+                     else {
                         doWrite("ERROR: Invalid method\n");
                     }
                 } else if (ec != boost::asio::error::eof) {

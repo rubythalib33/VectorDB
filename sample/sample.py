@@ -21,7 +21,7 @@ class Client:
         return response
 
 if __name__ == '__main__':
-    client = Client('localhost', 8000)
+    client = Client('localhost', 3737)
     client.connect()
 
     print(client)
@@ -44,6 +44,14 @@ if __name__ == '__main__':
 
     # Search for similar data
     response = client.send_request(f'SEARCH {token} 4.0 5.0 6.0 0.5 1\n')
+    print(response)
+
+    # Check is the data is similar
+    response = client.send_request(f'CHECK {token} label 4.0 5.0 6.0 0.5\n')
+    print(response)
+
+    # Delete the data
+    response = client.send_request(f'DELETE {token} label\n')
     print(response)
 
     client.close()

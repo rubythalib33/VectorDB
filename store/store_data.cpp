@@ -143,3 +143,15 @@ std::vector<std::string> StoreData::search(const std::vector<double>& query_embe
     }
     return m_search.search(query_embedding, threshold, top_k);
 }
+
+bool StoreData::check(const std::string& label, const std::vector<double>& query_embedding, double threshold){
+    // check if query embedding size is consistent with the existing data embeddings
+    if (!m_data.empty()) {
+        size_t embedding_size = m_data.begin().value()["embedding"].size();
+        if (embedding_size != query_embedding.size()) {
+            std::cerr << "Error: Query embedding size " << query_embedding.size() << " is inconsistent with existing data embeddings of size " << embedding_size << ".\n";
+            return {};
+        }
+    }
+    return m_search.check(label, query_embedding, threshold);
+}
