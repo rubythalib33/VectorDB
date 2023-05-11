@@ -1,0 +1,9 @@
+version: "3"
+services:
+  vectordb:
+    image: vectordb:latest
+    ports:
+      - "3737:3737"
+    environment:
+      - VDB_USERNAME=root
+      - VDB_PASSWORD=root
