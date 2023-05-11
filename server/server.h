@@ -161,7 +161,73 @@ private:
                         } else {
                             doWrite("ERROR: Invalid token\n");
                         }
-                    } else {
+                    } else if (method == "CHECK"){
+                        if (token_ == tokens) {
+                            std::string label;
+                            std::vector<double> query;
+                            double threshold;
+
+                            iss >> label;
+                            double val;
+                            int embedding_size = store_.getEmbeddingSize();
+                            for (int i = 0; i < embedding_size; i++) {
+                                iss >> val;
+                                query.push_back(val);
+                            }
+                            iss >> threshold;
+                            bool status = store_.check(label, query, threshold);
+
+                            if (status) {
+                                doWrite("YES\n");
+                            } else {
+                                doWrite("NO\n");
+                            }
+                        } else {
+                            doWrite("ERROR: Invalid token\n");
+                        }
+                    } else if (method == "MAKE_CLUSTER"){
+                        if (token_ == tokens){
+                            int cluster_size;
+                            iss >> cluster_size;
+
+                            bool status = store_.makeCluster(cluster_size);
+
+                            if (status) {
+                                doWrite("OK\n");
+                            } else {
+                                doWrite("ERROR: Failed to make cluster, the length of cluster is more then the length of the data\n");
+                            }
+                        }
+                    } else if (method == "SEARCH_CLUSTER"){
+                        if (token_ == tokens){
+                            std::vector<double> query;
+                            double val;
+                            int embedding_size = store_.getEmbeddingSize();
+                            for (int i = 0; i < embedding_size; i++) {
+                                iss >> val;
+                                query.push_back(val);
+                            }
+                            double threshold;
+                            int limit;
+                            iss >> threshold >> limit;
+                            std::vector<std::string> similar = store_.search(query, threshold, limit);
+                            std::ostringstream oss;
+                            for (std::string label : similar) {
+                                oss << label << " ";
+                            }
+                            oss << "\n";
+                            if (similar.size() > 0) {
+                                doWrite(oss.str());
+                            } else {
+                                doWrite("There's no similiar data\n");
+                            }
+                        }
+                    }
+                     else if (method == "EXIT") {
+                        doWrite("OK\n");
+                        socket_.close();
+                    }
+                     else {
                         doWrite("ERROR: Invalid method\n");
                     }
                 } else if (ec != boost::asio::error::eof) {

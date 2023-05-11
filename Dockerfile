@@ -1,5 +1,5 @@
 # Use the official Ubuntu 20.04 as a base image
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Set the working directory
 WORKDIR /vectordb
@@ -28,4 +28,4 @@ RUN mkdir build && \
 EXPOSE 3737
 
 # Run the application
-CMD ["./build/vectordb"]
+CMD ["/vectordb/build/vectordb"]

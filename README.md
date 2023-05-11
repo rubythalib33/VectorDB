@@ -22,7 +22,7 @@ docker build -t vectordb:latest .
 ```
 2. Run the container:
 ```bash
-docker run -p 3737:3737 --name vectordb_container vectordb
+docker compose up -d
 ```
 
 #### Without Docker
@@ -63,6 +63,9 @@ The Python script uses a `Client` class, which can be imported and used in other
 ### Example
 
 ```python
+import socket
+import time
+
 class Client:
     def __init__(self, host, port):
         self.host = host
@@ -82,24 +85,56 @@ class Client:
         response = self.sock.recv(1024).decode()
         return response
 
-client = Client('localhost', 8000)
-client.connect()
+if __name__ == '__main__':
+    client = Client('localhost', 3737)
+    client.connect()
 
-# Authenticate with the server
-response = client.send_request('AUTH root root\n')
-token = response
+    print(client)
+    # Authenticate with the server
+    response = client.send_request('AUTH root root\n')
+    token = response
+    print(response)
 
-# Create some data
-response = client.send_request(f'CREATE {token} label 1.0 2.0 3.0\n')
+    # # Create some data
+    response = client.send_request(f'CREATE {token} label 1.0 2.0 3.0\n')
+    print(response)
 
-# Read the data
-response = client.send_request(f'READ {token} label\n')
+    # # Read the data
+    response = client.send_request(f'READ {token} label\n')
+    print(response)
 
-# Update the data
-response = client.send_request(f'UPDATE {token} label 4.0 5.0 6.0\n')
+    # Update the data
+    response = client.send_request(f'UPDATE {token} label 4.0 5.0 6.0\n')
+    print(response)
 
-# Search for similar data
-response = client.send_request(f'SEARCH {token} 4.0 5.0 6.0 0.5 1\n')
+    # Search for similar data
+    response = client.send_request(f'SEARCH {token} 4.0 5.0 6.0 0.5 1\n')
+    print(response)
 
-client.close()
+    # Check is the data is similar
+    response = client.send_request(f'CHECK {token} label 4.0 5.0 6.0 0.5\n')
+    print(response)
+
+    # Delete the data
+    response = client.send_request(f'DELETE {token} label\n')
+    print(response)
+
+    # Create 100 data
+    import random
+    for i in range(100):
+        response = client.send_request(f'CREATE {token} label_{i} {random.random()} {random.random()} {random.random()}\n')
+        print(response)
+
+    # create data
+    response = client.send_request(f'CREATE {token} label 1.0 2.0 3.0\n')
+    
+    # make cluster of 5, Note: if you add new data or update the data after clustering the data, you need to do cluster again if you want to use the updated data
+    response = client.send_request(f'MAKE_CLUSTER {token} 5\n')
+    print(response)
+
+    # search cluster
+    response = client.send_request(f'SEARCH_CLUSTER {token} 1.0 2.0 3.0 0.5 1\n')
+    print(response)
+
+    client.close()
 ```
